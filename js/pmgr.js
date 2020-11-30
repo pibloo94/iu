@@ -41,6 +41,12 @@ function createPrinterItem(printer) {
     `<span class="badge badge-secondary">${id}</span>`
   ).join(" ");
 
+  let allGroups = Pmgr.globalState.groups.filter(g => g.printers.indexOf(printer.id)).map(g =>
+    `<span class="badge badge-secondary">${g.name}</span>`
+  ).join(" ");
+
+  let editAllGroups = Pmgr.globalState.groups.filter(g => g.printers.indexOf(printer.id)).map(g => g.name).join(", ");
+
   return `
     <tr id=${printer.id}>
       <th scope="row">${printer.id}</th>
@@ -49,12 +55,12 @@ function createPrinterItem(printer) {
       <td>
         <h5><span class="badge badge-pill ${pillClass[printer.status]}">${printer.status}</span></h5>
       </td>
-      <td>${printer.group}</td>
+      <td>${allGroups}</td>
       <td>${printer.ip}</td>
       <td>${printer.location}</td>
       <td>${allJobs}</td>
       <td>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPrinterModal${printer.id}" data-toggle="tooltip" title="edit printer">
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editPrinterModal${printer.id}" data-toggle="tooltip" title="edit printer">
           ✏️
         </button>
         <div class="modal fade" id="editPrinterModal${printer.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -79,7 +85,7 @@ function createPrinterItem(printer) {
                       <input type="text" class="form-control" name="input-status" value="${printer.status}" placeholder="Status">
                     </div>
                     <div class="form-group col-12">
-                      <input type="text" class="form-control" name="input-group" value="${printer.group}" placeholder="Group">
+                      <input type="text" class="form-control" name="input-group" value="${editAllGroups}" placeholder="Group">
                     </div>
                     <div class="form-group col-12">
                       <input type="text" class="form-control" name="input-ip" value="${printer.ip}" placeholder="IP">
@@ -97,7 +103,7 @@ function createPrinterItem(printer) {
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-primary remove-printer" data-toggle="modal" data-target="#deletePrinterModal${printer.id}" data-toggle="tooltip" title="delete printer">
+        <button type="button" class="btn btn-danger remove-printer" data-toggle="modal" data-target="#deletePrinterModal${printer.id}" data-toggle="tooltip" title="delete printer">
           🗑️
         </button>
         <div class="modal fade" id="deletePrinterModal${printer.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -137,7 +143,7 @@ function createGroupItem(group) {
       <td>${group.printers.length}</td>
       <td>${allPrinters}</td>
       <td>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editGroupModal${group.id}" data-toggle="tooltip" title="edit group">
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editGroupModal${group.id}" data-toggle="tooltip" title="edit group">
           ✏️
         </button>
         <div class="modal fade" id="editGroupModal${group.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -156,6 +162,10 @@ function createGroupItem(group) {
                     <div class="form-group col-8">
                       <input type="text" class="form-control" name="inputGroupName" value="${group.name}">
                     </div>
+                    <label for="inputGroupPrinters" class="col-sm-4 col-form-label">Printers </label>
+                    <div class="form-group col-8">
+                      <input type="text" class="form-control" name="inputGroupPrinters" value="${group.printers}">
+                    </div>
                   </div>
                 </form>
               </div>
@@ -166,7 +176,7 @@ function createGroupItem(group) {
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteGroupModal${group.id}" data-toggle="tooltip" title="delete group">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteGroupModal${group.id}" data-toggle="tooltip" title="delete group">
           🗑️
         </button>
         <div class="modal fade" id="deleteGroupModal${group.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -201,7 +211,7 @@ function createJobItem(job) {
       <td>${job.owner}</td>
       <td>${job.fileName}</td>
       <td>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editJobModal${job.id}" data-toggle="tooltip" title="edit job">
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editJobModal${job.id}" data-toggle="tooltip" title="edit job">
           ✏️
         </button>
         <div class="modal fade" id="editJobModal${job.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -243,7 +253,7 @@ function createJobItem(job) {
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteJobModal${job.id}" data-toggle="tooltip" title="delete job">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteJobModal${job.id}" data-toggle="tooltip" title="delete job">
           🗑️
         </button>
         <div class="modal fade" id="deleteJobModal${job.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -356,6 +366,7 @@ function restartModalAddPrinter() {
   $('.modal-body').find('input[name="printer-group"]').val("");
   $('.modal-body').find('input[name="printer-ip"]').val("");
   $('.modal-body').find('input[name="printer-location"]').val("");
+  //$(miformulario).find("input").val("")
 }
 
 // funcion para editar una determinada impresora
@@ -366,6 +377,12 @@ function editPrinter(index) {
   printers[index].group = $('#edit-printer').find('input[name="input-group"]').val();
   printers[index].ip = $('#edit-printer').find('input[name="input-ip"]').val();
   printers[index].location = $('#edit-printer').find('input[name="input-location"]').val();
+
+  /*
+  for (let c of campos) {
+      printers[index][campo] = $('.modal_body input[name="printer-' +campo +'"]').val(); 
+  }
+  */
 
   console.log(printers);
 }
@@ -458,9 +475,9 @@ $(function () {
       Pmgr.globalState.groups.forEach(g => $("#groupsTableBody").append(createGroupItem(g)));
       Pmgr.globalState.jobs.forEach(j => $("#jobsTableBody").append(createJobItem(j)));
       Pmgr.globalState.printers.forEach(printer => {
-        $('#inputPrinterAsigned').append(`<option value=${printer.id}>${printer.id}</option>`);
+        $('#inputPrinterAsigned').append(`<option value=${printer.alias}>${printer.alias}</option>`);
       });
-    
+
       // y asi para cada cosa que pueda haber cambiado
     } catch (e) {
       console.log('Error actualizando', e);

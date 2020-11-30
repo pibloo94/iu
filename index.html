@@ -34,36 +34,50 @@
   <div class="tab-content" id="myTabContent">
     <!-- ##################################### PRINTERS ##################################### -->
     <div class="tab-pane fade show active" id="printers" role="tabpanel" aria-labelledby="home-tab">
-      <div class="d-flex justify-content-center">
-        <h1>Printers</h1>
-      </div>
-      <!-- Form filter printer -->
-      <form class="filterBy" onsubmit="addNewPrinter()">
-        <label>Filter by: </label>
-        <div class="form-row">
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinterName" placeholder="Name">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinterModel" placeholder="Model">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinterStatus" placeholder="Status">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinterGroup" placeholder="Group">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinterIP" placeholder="ip">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinterLocation" placeholder="Location">
-          </div>
-          <div class="form-group col-md-1">
-            <button type="submit" class="btn btn-primary">🔍</button>
-          </div>
+      <div class="row">
+        <div class="col-12">
+          <h1 class="text-center">Printers</h1>
         </div>
-      </form>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <label class="col-form-label">Filter by </label>
+        </div>
+        <!-- Form filter printer -->
+        <div class="col-auto mr-auto">
+          <form id="printerFilterBy">
+            <div class="form-row">
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinterName" placeholder="Name">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinterModel" placeholder="Model">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinterStatus" placeholder="Status">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinterGroup" placeholder="Group">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinterIP" placeholder="ip">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinterLocation" placeholder="Location">
+              </div>
+              <div class="form-group col-md-1">
+                <button type="submit" class="btn btn-primary">🔍</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-auto">
+          <button id="addPrinterBtn" type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#addPrinterModal" data-toggle="tooltip" data-placement="top" title="add printer">
+            ➕
+          </button>
+        </div>
+      </div>
       <!-- Printers table -->
       <table id="printersTable" class="table">
         <thead id="printersTableHead">
@@ -72,7 +86,7 @@
             <th scope="col">Name</th>
             <th scope="col">Model</th>
             <th scope="col">Status</th>
-            <th scope="col">Group</th>
+            <th scope="col">Groups</th>
             <th scope="col">IP</th>
             <th scope="col">Location</th>
             <th scope="col">Jobs</th>
@@ -83,17 +97,7 @@
           <!-- generated printers table body -->
         </tbody>
       </table>
-      <!-- Add printer -->
-      <div class="row">
-        <div class="col-auto">
-          <button type="button" class="btn btn-primary add-printer" data-toggle="modal" data-target="#addPrinterModal"
-            data-toggle="tooltip" data-placement="top" title="add printer">
-            ➕
-          </button>
-        </div>
-      </div>
     </div>
-    <!-- Add printer modal-->
     <div id="addPrinterModal" class="modal fade" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -133,26 +137,41 @@
     </div>
     <!-- ##################################### GROUPS ##################################### -->
     <div class="tab-pane fade" id="groups" role="tabpanel" aria-labelledby="groups-tab">
-      <div class="d-flex justify-content-center">
-        <h1>Groups</h1>
-      </div>
-      <form class="filterBy">
-        <label>Filter by: </label>
-        <div class="form-row">
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputName" placeholder="Name">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputModel" placeholder="Nºprinters">
-          </div>
-          <div class="form-group col-md-3">
-            <input type="text" class="form-control" id="inputStatus" placeholder="Printers (P001, P002, ...)">
-          </div>
-          <div class="form-group col-md-1">
-            <button type="button" class="btn btn-primary">🔍</button>
-          </div>
+      <div class="row">
+        <div class="col-12">
+          <h1 class="text-center">Groups</h1>
         </div>
-      </form>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <label class="col-form-label">Filter by </label>
+        </div>
+        <!-- Form filter groups -->
+        <div class="col-auto mr-auto">
+          <form id="groupFilterBy">
+            <div class="form-row">
+              <div class="form-group col-md-2">
+                <input type="text" class="form-control" id="inputName" placeholder="Name">
+              </div>
+              <div class="form-group col-md-2">
+                <input type="text" class="form-control" id="inputModel" placeholder="Nºprinters">
+              </div>
+              <div class="form-group col-md-4">
+                <input type="text" class="form-control" id="inputStatus" placeholder="Printers (P001, P002, ...)">
+              </div>
+              <div class="form-group col-md-1">
+                <button type="button" class="btn btn-primary">🔍</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-auto">
+          <button id="addGroupBtn" type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#addGroupModal" data-toggle="tooltip" data-placement="top" title="add group">
+            ➕
+          </button>
+        </div>
+      </div>
       <table id="groupsTable" class="table">
         <thead>
           <tr>
@@ -167,14 +186,6 @@
           <!-- generated groups table body -->
         </tbody>
       </table>
-      <div class="row">
-        <div class="col-auto">
-          <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addGroupModal"
-            data-toggle="tooltip" data-placement="top" title="add group">
-            ➕
-          </button>
-        </div>
-      </div>
     </div>
     <div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -192,7 +203,8 @@
                   <input type="text" class="form-control" name="inputGroupName" placeholder="Name">
                 </div>
                 <div class="form-group col-12">
-                  <input type="text" class="form-control" name="inputGroupPrinters" placeholder="Printers (P001, P002, ...)">
+                  <input type="text" class="form-control" name="inputGroupPrinters"
+                    placeholder="Printers (P001, P002, ...)">
                 </div>
               </div>
             </form>
@@ -206,35 +218,50 @@
     </div>
     <!-- ##################################### JOBS ##################################### -->
     <div class="tab-pane fade" id="jobs" role="tabpanel" aria-labelledby="jobs-tab">
-      <div class="d-flex justify-content-center">
-        <h1>Jobs</h1>
-      </div>
-      <form class="filterBy">
-        <label>Filter by: </label>
-        <div class="form-row">
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputJob" placeholder="Job">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputStatus" placeholder=Status>
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputUserOwner" placeholder="User owner">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputFile" placeholder="File">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputGroupAsigned" placeholder="Group asigned">
-          </div>
-          <div class="form-group col-md-1">
-            <input type="text" class="form-control" id="inputPrinters" placeholder="Printer asigned">
-          </div>
-          <div class="form-group col-md-1">
-            <button type="button" class="btn btn-primary">🔍</button>
-          </div>
+      <div class="row">
+        <div class="col-12">
+          <h1 class="text-center">Jobs</h1>
         </div>
-      </form>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <label class="col-form-label">Filter by </label>
+        </div>
+        <!-- Form filter job -->
+        <div class="col-auto mr-auto">
+          <form id="jobFilterBy">
+            <div class="form-row">
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputJob" placeholder="Job">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputStatus" placeholder=Status>
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputUserOwner" placeholder="User owner">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputFile" placeholder="File">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputGroupAsigned" placeholder="Group asigned">
+              </div>
+              <div class="form-group col-md-1">
+                <input type="text" class="form-control" id="inputPrinters" placeholder="Printer asigned">
+              </div>
+              <div class="form-group col-md-1">
+                <button type="button" class="btn btn-primary">🔍</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-auto">
+          <button id="addJobBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addJobModal"
+            data-toggle="tooltip" data-placement="top" title="add job">
+            ➕
+          </button>
+        </div>
+      </div>
       <table id="jobsTable" class="table">
         <thead>
           <tr>
@@ -246,18 +273,11 @@
           </tr>
         </thead>
         <tbody id="jobsTableBody">
+          <!-- generated jobs table body -->
         </tbody>
       </table>
-      <div class="row">
-        <div class="col-auto">
-          <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addJobModal"
-            data-toggle="tooltip" data-placement="top" title="add job">
-            ➕
-          </button>
-        </div>
-      </div>
     </div>
-    <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div id="addJobModal" class="modal fade" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -278,8 +298,7 @@
                 </div>
                 <div class="form-group col-12">
                   <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="inputFileName"
-                      aria-describedby="inputFileName">
+                    <input type="file" class="custom-file-input" name="inputFileName" aria-describedby="inputFileName">
                     <label class="custom-file-label" for="inputFileName">Choose file</label>
                   </div>
                 </div>
