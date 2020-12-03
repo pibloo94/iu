@@ -485,13 +485,15 @@ $(function () {
   }
 
   // Servidor a utilizar. También puedes lanzar tú el tuyo en local (instrucciones en Github)
-  const serverUrl = "http://localhost:8080/api/";
+  // const serverUrl = "http://localhost:8080/api/";
+  const serverUrl = "gin.fdi.ucm:3128";
   Pmgr.connect(serverUrl);
 
   // ejemplo de login
-  Pmgr.login("HDY0IQ", "cMbwKQ").then(d => {
+  // gx, xyz
+  Pmgr.login("g6", "printerg06").then(d => {
     if (d !== undefined) {
-      const u = Gb.resolve("HDY0IQ");
+      const u = Gb.resolve("g6");
       console.log("login ok!", u);
     } else {
       console.log(`error en login (revisa la URL: ${serverUrl}, y verifica que está vivo)`);
