@@ -60,7 +60,7 @@ function createPrinterItem(printer) {
       <td>${printer.location}</td>
       <td>${allJobs}</td>
       <td>
-        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editPrinterModal${printer.id}" data-toggle="tooltip" title="edit printer">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#editPrinterModal${printer.id}" data-toggle="tooltip" title="edit printer">
           ✏️
         </button>
         <div class="modal fade" id="editPrinterModal${printer.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -103,7 +103,7 @@ function createPrinterItem(printer) {
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-danger remove-printer" data-toggle="modal" data-target="#deletePrinterModal${printer.id}" data-toggle="tooltip" title="delete printer">
+        <button type="button" class="btn btn-outline-danger remove-printer" data-toggle="modal" data-target="#deletePrinterModal${printer.id}" data-toggle="tooltip" title="delete printer">
           🗑️
         </button>
         <div class="modal fade" id="deletePrinterModal${printer.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -143,7 +143,7 @@ function createGroupItem(group) {
       <td>${group.printers.length}</td>
       <td>${allPrinters}</td>
       <td>
-        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editGroupModal${group.id}" data-toggle="tooltip" title="edit group">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#editGroupModal${group.id}" data-toggle="tooltip" title="edit group">
           ✏️
         </button>
         <div class="modal fade" id="editGroupModal${group.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -176,7 +176,7 @@ function createGroupItem(group) {
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteGroupModal${group.id}" data-toggle="tooltip" title="delete group">
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteGroupModal${group.id}" data-toggle="tooltip" title="delete group">
           🗑️
         </button>
         <div class="modal fade" id="deleteGroupModal${group.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -211,7 +211,7 @@ function createJobItem(job) {
       <td>${job.owner}</td>
       <td>${job.fileName}</td>
       <td>
-        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editJobModal${job.id}" data-toggle="tooltip" title="edit job">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#editJobModal${job.id}" data-toggle="tooltip" title="edit job">
           ✏️
         </button>
         <div class="modal fade" id="editJobModal${job.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -253,7 +253,7 @@ function createJobItem(job) {
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteJobModal${job.id}" data-toggle="tooltip" title="delete job">
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteJobModal${job.id}" data-toggle="tooltip" title="delete job">
           🗑️
         </button>
         <div class="modal fade" id="deleteJobModal${job.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -485,27 +485,37 @@ $(function () {
   }
 
   // Servidor a utilizar. También puedes lanzar tú el tuyo en local (instrucciones en Github)
-  // const serverUrl = "http://localhost:8080/api/";
-  const serverUrl = "gin.fdi.ucm:3128";
+  const serverUrl = "http://localhost:8080/api/";
+  //const serverUrl = "http://gin.fdi.ucm.es:3128/api/";
   Pmgr.connect(serverUrl);
 
   // ejemplo de login
   // gx, xyz
   Pmgr.login("g6", "printerg06").then(d => {
     if (d !== undefined) {
-      const u = Gb.resolve("g6");
+      const u = Pmgr.resolve("g6"); // cambiado Gb por Pmgr
       console.log("login ok!", u);
+      update();
     } else {
       console.log(`error en login (revisa la URL: ${serverUrl}, y verifica que está vivo)`);
       console.log("Generando datos de ejemplo para uso en local...")
-
       populate();
       update();
     }
   });
 
   $('#addPrinter').on('click', function () {
-    addPrinter();
+    let printer = new Pmgr.Printer();
+
+    printer.id = (Pmgr.globalState.printers[Pmgr.globalState.printers.length - 1].id) + 1;
+    printer.alias = $('.modal-body').find('input[name="printer-name"]').val();
+    printer.model = $('.modal-body').find('input[name="printer-model"]').val();
+    printer.ip = $('.modal-body').find('input[name="printer-ip"]').val();
+    printer.location = $('.modal-body').find('input[name="printer-location"]').val();
+    printer.status = "paused";
+    printer.queue = [];
+
+    Pmgr.addPrinter(printer);
     update();
   });
 
