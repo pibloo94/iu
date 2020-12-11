@@ -98,7 +98,7 @@ function createPrinterItem(printer) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="editPrinter">Edit</button>
+                <button type="button" class="btn btn-primary edit" data-printerid="${printer.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -120,7 +120,7 @@ function createPrinterItem(printer) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" id="deletePrinter">Delete</button>
+                <button type="button" class="btn btn-danger rm" data-printerid="${printer.id}">Delete</button>
               </div>
             </div>
           </div>
@@ -193,7 +193,7 @@ function createGroupItem(group) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteGroup(${group.id})">Delete</button>
+                <button type="button" class="btn btn-danger rmg" data-groupid="${group.id}">Delete</button>
               </div>
             </div>
           </div>
@@ -270,7 +270,7 @@ function createJobItem(job) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteJob(${job.id})">Delete</button>
+                <button type="button" class="btn btn-danger rmj" data-jobid="${job.id}">Delete</button>
               </div>
             </div>
           </div>
@@ -341,122 +341,6 @@ async function populate(minPrinters, maxPrinters, minGroups, maxGroups, jobCount
   }
 }
 
-// FUNCIONES DE PRINTER
-// funcion para añadir una impresora
-function addPrinter() {
-  let printer = new Pmgr.Printer();
-
-  printer.id = (Pmgr.globalState.printers[Pmgr.globalState.printers.length - 1].id) + 1;
-  printer.alias = $('.modal-body').find('input[name="printer-name"]').val();
-  printer.model = $('.modal-body').find('input[name="printer-model"]').val();
-  printer.ip = $('.modal-body').find('input[name="printer-ip"]').val();
-  printer.location = $('.modal-body').find('input[name="printer-location"]').val();
-  printer.status = "paused";
-  printer.queue = [];
-
-  Pmgr.globalState.printers.push(printer);
-  restartModalAddPrinter();
-  console.log(Pmgr.globalState.printers);
-}
-
-// funcion para limpiar el formulario de añadir impresora
-function restartModalAddPrinter() {
-  $('.modal-body').find('input[name="printer-name"]').val("");
-  $('.modal-body').find('input[name="printer-model"]').val("");
-  $('.modal-body').find('input[name="printer-group"]').val("");
-  $('.modal-body').find('input[name="printer-ip"]').val("");
-  $('.modal-body').find('input[name="printer-location"]').val("");
-  //$(miformulario).find("input").val("")
-}
-
-// funcion para editar una determinada impresora
-function editPrinter(index) {
-  /* TODO: arreglar fallo edit */
-  printers[index].name = $('#edit-printer').find('input[name="input-name"]').val();
-  printers[index].model = $('#edit-printer').find('input[name="input-model"]').val();
-  printers[index].group = $('#edit-printer').find('input[name="input-group"]').val();
-  printers[index].ip = $('#edit-printer').find('input[name="input-ip"]').val();
-  printers[index].location = $('#edit-printer').find('input[name="input-location"]').val();
-
-  /*
-  for (let c of campos) {
-      printers[index][campo] = $('.modal_body input[name="printer-' +campo +'"]').val(); 
-  }
-  */
-
-  console.log(printers);
-}
-
-// funcion para eliminar una determinada impresora
-function deletePrinter(index) {
-  Pmgr.globalState.printers.splice(index, 1);
-  console.log(Pmgr.globalState.printers);
-}
-
-// FUNCIONES DE GROUP
-// funcion para añadir un grupo
-function addGroup() {
-  let group = new Pmgr.Group();
-
-  // group.id = Pmgr.Util.randomWord(5,true);
-  group.id = (Pmgr.globalState.groups[Pmgr.globalState.groups.length - 1].id) + 1;
-  group.name = $('.modal-body').find('input[name="inputGroupName"]').val();
-  group.printers = $('.modal-body').find('input[name="inputGroupPrinters"]').val();
-  const aux = group.printers.split(',');
-  group.printers = aux;
-
-  console.log(group);
-  Pmgr.globalState.groups.push(group);
-  restartModalAddGroup();
-  console.log(Pmgr.globalState.printers);
-}
-
-// funcion para limpiar el formulario de añadir grupo
-function restartModalAddGroup() {
-  $('.modal-body').find('input[name="inputGroupName"]').val("");
-  $('.modal-body').find('input[name="inputGroupPrinters"]').val("");
-}
-
-// funcion para eliminar un determinado grupo
-function deleteGroup(index) {
-  group.splice(index, 1);
-  console.log(Pmgr.globalState.groups);
-}
-
-// FUNCIONES DE JOB
-// funcion para añadir un trabajo
-function addJob() {
-  let job = new Pmgr.Job();
-
-  // group.id = Pmgr.Util.randomWord(5,true);
-  job.id = (Pmgr.globalState.jobs[Pmgr.globalState.jobs.length - 1].id) + 1;
-  job.printer = $('.modal-body').find('input[name="inputFileName"]').val();
-  job.owner = $('.modal-body').find('input[name="inputOwner"]').val();
-  job.fileName = $('.modal-body').find('#inputPrinterAsigned').val();
-  console.log(job.fileName);
-
-  Pmgr.globalState.jobs.push(job);
-  restartModalAddJob();
-  console.log(Pmgr.globalState.jobs);
-}
-
-// funcion para limpiar el formulario de añadir trabajo
-function restartModalAddJob() {
-  $('.modal-body').find('input[name="inputOwner"]').val("");
-  $('.modal-body').find('input[name="inputFileName"]').val("");
-  $('.modal-body').find('#inputPrinterAsigned').val("");
-}
-
-// funcion para eliminar un determinado trabajo
-function deleteJob(index) {
-  jobs.splice(index, 1);
-  console.log(Pmgr.globalState.jobs);
-}
-
-/*
-  TODOS: ... hacer resto de funciones
-*/
-
 // PARTE 2:
 // Código de pegamento, ejecutado sólo una vez que la interfaz esté cargada.
 // Generalmente de la forma $("selector").cosaQueSucede(...)
@@ -475,9 +359,14 @@ $(function () {
       Pmgr.globalState.groups.forEach(g => $("#groupsTableBody").append(createGroupItem(g)));
       Pmgr.globalState.jobs.forEach(j => $("#jobsTableBody").append(createJobItem(j)));
       Pmgr.globalState.printers.forEach(printer => {
-        $('#inputPrinterAsigned').append(`<option value=${printer.alias}>${printer.alias}</option>`);
+        $('#inputPrintersGroup').append(`<option value=${printer.id}>${printer.alias}</option>`);
       });
-
+      Pmgr.globalState.printers.forEach(printer => {
+        $('#inputPrinterAsigned').append(`<option value=${printer.id}>${printer.alias}</option>`);
+      });
+      Pmgr.globalState.groups.forEach(group => {
+        $('#printer-group').append(`<option value=${group.id}>${group.name}</option>`);
+      });
       // y asi para cada cosa que pueda haber cambiado
     } catch (e) {
       console.log('Error actualizando', e);
@@ -485,15 +374,14 @@ $(function () {
   }
 
   // Servidor a utilizar. También puedes lanzar tú el tuyo en local (instrucciones en Github)
-  const serverUrl = "http://localhost:8080/api/";
-  //const serverUrl = "http://gin.fdi.ucm.es:3128/api/";
+  const serverUrl = "http://gin.fdi.ucm.es:3128/api/";
   Pmgr.connect(serverUrl);
 
   // ejemplo de login
   // gx, xyz
   Pmgr.login("g6", "printerg06").then(d => {
     if (d !== undefined) {
-      const u = Pmgr.resolve("g6"); // cambiado Gb por Pmgr
+      const u = Pmgr.resolve("g6");
       console.log("login ok!", u);
       update();
     } else {
@@ -504,8 +392,11 @@ $(function () {
     }
   });
 
-  $('#addPrinter').on('click', function () {
-    let printer = new Pmgr.Printer();
+  // FUNCIONES DE PRINTER
+  // crear impresora
+  $('#addPrinter').on('click', async function () {
+    const printer = new Pmgr.Printer();
+    const group = Pmgr.globalState.groups.find(element => element.name == $('.modal-body').find('#printer-group').val());
 
     printer.id = (Pmgr.globalState.printers[Pmgr.globalState.printers.length - 1].id) + 1;
     printer.alias = $('.modal-body').find('input[name="printer-name"]').val();
@@ -515,28 +406,87 @@ $(function () {
     printer.status = "paused";
     printer.queue = [];
 
-    Pmgr.addPrinter(printer);
+    await Pmgr.addPrinter(printer);
+    const aux = Pmgr.globalState.printers.find(element => element.alias == printer.alias);
+    await group.printers.push(aux.id);
     update();
+
+    console.log(printer);
+    console.log(group);
   });
 
-  $('#deletePrinter').on('click', function () {
-    deletePrinter(/* ... */);
-    update();
+  // eliminar impresora
+   $('#printersTable').on('click', 'button.rm', async(e) =>  {
+    const id = $(e.target).attr("data-printerid");
+    await Pmgr.rmPrinter(+id).then(() => update());
+    location.reload(); 
   });
 
-  $('#editPrinter').on('click', function () {
-    editPrinter(/* ... */);
-    update();
+  // editar impresora
+  $('#printersTable').on('click', 'button.edit', async(e) => {
+    const printerid = $(e.target).attr("data-printerid");
+    const printer = Pmgr.globalState.printers.find(element => element.id = printerid);
+
+    console.log("antes", printer);
+
+    printer.alias = $('#editPrinter').find('input[name="input-name"]').val();
+    printer.model = $('#editPrinter').find('input[name="input-model"]').val();
+    printer.group = $('#editPrinter').find('input[name="input-group"]').val();
+    printer.ip = $('#editPrinter').find('input[name="input-ip"]').val();
+    printer.location = $('#editPrinter').find('input[name="input-location"]').val();
+
+    console.log("despues", printer);
+
+    await Pmgr.setPrinter(printer).then(() => update());
+    // location.reload(); 
   });
 
+  // FUNCIONES DE GROUP
   $('#addGroup').on('click', function () {
-    addGroup();
-    update();
+    const group = new Pmgr.Group();
+
+    //group.id = (Pmgr.globalState.groups[Pmgr.globalState.groups.length - 1].id) + 1;
+    group.name = $('.modal-body').find('input[name="inputGroupName"]').val();
+    let selected = [];
+
+    for (var option of document.getElementById('inputPrintersGroup').options) {
+      if (option.selected) {
+        group.printers.push(option.value);
+      }
+    }
+
+    console.log(selected);
+    console.log("new group", group);
+
+    Pmgr.addGroup(group);
   });
 
+  // eliminar grupo
+  $('#groupsTable').on('click', 'button.rmg', async(e) =>  {
+    const id = $(e.target).attr("data-groupid");
+    await Pmgr.rmGroup(+id).then(() => update());
+    location.reload(); 
+  });
+
+  // FUNCIONES DE JOB
   $('#addJob').on('click', function () {
-    addJob();
-    update();
+    let job = new Pmgr.Job();
+
+    // group.id = Pmgr.Util.randomWord(5,true);
+    job.id = (Pmgr.globalState.jobs[Pmgr.globalState.jobs.length - 1].id) + 1;
+    job.printer = $('.modal-body').find('input[name="inputFileName"]').val();
+    job.owner = $('.modal-body').find('input[name="inputOwner"]').val();
+    job.fileName = $('.modal-body').find('#inputPrinterAsigned').val();
+    console.log(job.fileName);
+  
+    Pmgr.globalState.jobs.push(job);
+  });
+
+  // eliminar grupo
+  $('#jobsTable').on('click', 'button.rmj', async(e) =>  {
+      const id = $(e.target).attr("data-jobid");
+      await Pmgr.rmJob(+id).then(() => update());
+      location.reload(); 
   });
 
   /*

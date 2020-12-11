@@ -66,7 +66,7 @@
                 <input type="text" class="form-control" id="inputPrinterLocation" placeholder="Location">
               </div>
               <div class="form-group col-md-1">
-                <button type="submit" class="btn btn-primary">🔍</button>
+                <button type="search" class="btn btn-primary">🔍</button>
               </div>
             </div>
           </form>
@@ -117,7 +117,8 @@
                   <input type="text" class="form-control" name="printer-model" placeholder="Model">
                 </div>
                 <div class="form-group col-12">
-                  <input type="text" class="form-control" name="printer-group" placeholder="Group">
+                  <select class="custom-select select-group-printer" id="printer-group" placeholder="Group">
+                  </select>
                 </div>
                 <div class="form-group col-12">
                   <input type="text" class="form-control" name="printer-ip" placeholder="IP">
@@ -203,8 +204,8 @@
                   <input type="text" class="form-control" name="inputGroupName" placeholder="Name">
                 </div>
                 <div class="form-group col-12">
-                  <input type="text" class="form-control" name="inputGroupPrinters"
-                    placeholder="Printers (P001, P002, ...)">
+                  <select class="custom-select multi-select-printers-group" id="inputPrintersGroup" multiple>
+                  </select>
                 </div>
               </div>
             </form>
