@@ -171,7 +171,7 @@ function createGroupItem(group) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="editGroup(${group.id})">Edit</button>
+                <button type="button" class="btn btn-primary" data-groupid="${group.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -248,7 +248,7 @@ function createJobItem(job) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="editJob(${job.id})">Edit</button>
+                <button type="button" class="btn btn-primary" data-jobid="${job.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -468,25 +468,65 @@ $(function () {
     location.reload(); 
   });
 
+  // editar grupo
+  $('#groupsTable').on('click', 'button.edit', async(e) => {
+    const groupid = $(e.target).attr("data-groupid");
+    const group = Pmgr.globalState.groups.find(element => element.id = groupid);
+  
+    console.log("antes", group);
+
+    group.name = $('#editGroup').find('input[name="inputGroupName"]').val();
+    let selected = [];
+
+    for (var option of document.getElementById('inputPrintersGroup').options) {
+      if (option.selected) {
+        group.printers.push(option.value);
+      }
+    }
+  
+    console.log("despues", group);
+  
+    await Pmgr.setGroup(group).then(() => update());
+    // location.reload(); 
+  });
+
   // FUNCIONES DE JOB
   $('#addJob').on('click', function () {
-    let job = new Pmgr.Job();
+    const job = new Pmgr.Job();
 
     // group.id = Pmgr.Util.randomWord(5,true);
     job.id = (Pmgr.globalState.jobs[Pmgr.globalState.jobs.length - 1].id) + 1;
-    job.printer = $('.modal-body').find('input[name="inputFileName"]').val();
+    job.printer = $('.modal-body').find('select[id="inputPrinterAsigned"]').val(); //esto no es asi, no se como coger el valor de la impresora
     job.owner = $('.modal-body').find('input[name="inputOwner"]').val();
-    job.fileName = $('.modal-body').find('#inputPrinterAsigned').val();
-    console.log(job.fileName);
-  
-    Pmgr.globalState.jobs.push(job);
+    job.fileName = $('.modal-body').find('input[name="inputFileName"]').val(); //esto lo he probado y no me coge nada
+    
+    console.log("new job", job);
+
+    Pmgr.addJob(job);
   });
 
-  // eliminar grupo
+  // eliminar job
   $('#jobsTable').on('click', 'button.rmj', async(e) =>  {
       const id = $(e.target).attr("data-jobid");
       await Pmgr.rmJob(+id).then(() => update());
       location.reload(); 
+  });
+
+  // editar job
+  $('#jobsTable').on('click', 'button.edit', async(e) => {
+    const jobid = $(e.target).attr("data-jobid");
+    const job = Pmgr.globalState.jobs.find(element => element.id = jobid);
+  
+    console.log("antes", job);
+  
+    job.printer = $('#editGroup').find('select[id="inputPrinterAsigned"]').val(); 
+    job.owner = $('#editGroup').find('input[name="inputOwner"]').val();
+    job.fileName = $('#editGroup').find('input[name="inputFileName"]').val(); 
+  
+    console.log("despues", job);
+  
+    await Pmgr.setJob(job).then(() => update());
+    // location.reload(); 
   });
 
   /*
