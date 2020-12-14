@@ -546,10 +546,10 @@ $(function () {
     });
   });
 
-  // editar grupo
+  // editar grupo CHECKED
   $('#groupsTable').on('click', 'button.editg', async(e) => {
-    const groupid = $(e.target).attr("data-groupid");
-    const group = Pmgr.globalState.groups.find(element => element.id = groupid);
+    const groupId = $(e.target).attr("data-groupid");
+    const group = Pmgr.globalState.groups.find(element => element.id = groupId);
 
     const name = $('#editGroup').find('input[name="edit-group-name"]').val();
     const printers = [];
@@ -560,10 +560,10 @@ $(function () {
       }
     }
 
-    let o= { id: +groupid, name, printers };
+    let o= { id: +groupId, name, printers };
     console.log("edit group", group, "data", o);
 
-    await Pmgr.setGroup(o).then(() => {
+    Pmgr.setGroup(o).then(() => {
       update();
       $('#editGroupModal' +groupId).modal('hide');
       $('body').removeClass('modal-open');
@@ -616,14 +616,14 @@ $(function () {
 
    // editar trabajo
    $('#jobsTable').on('click', 'button.editj', async(e) => {
-    const jobid = $(e.target).attr("data-jobid");
-    const job = Pmgr.globalState.jobs.find(element => element.id = jobid);
+    const jobId = $(e.target).attr("data-jobid");
+    const job = Pmgr.globalState.jobs.find(element => element.id = jobId);
 
     const fileName = $('.modal-body').find('#edit-job-file-input').val();
     const owner = $('.modal-body').find('input[name="edit-job-owner"]').val();
     const printer = $('.modal-body').find('input[name="edit-job-printer-name"]').val();
 
-    let o =  { id: +jobid, printer, owner, fileName };
+    let o =  { id: +jobId, printer, owner, fileName };
     console.log("edit job", job, "data", o);
     
     await Pmgr.setJob(o).then(() => {
