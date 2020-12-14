@@ -461,7 +461,7 @@ $(function () {
     const printer = new Pmgr.Printer();
     const group = Pmgr.globalState.groups.find(element => element.id == $('.modal-body').find('#printer-group').val());
 
-    printer.id = (Pmgr.globalState.printers[Pmgr.globalState.printers.length - 1].id) + 1;
+    //printer.id = (Pmgr.globalState.printers[Pmgr.globalState.printers.length - 1].id) + 1;
     printer.alias = $('.modal-body').find('input[name="printer-name"]').val();
     printer.model = $('.modal-body').find('input[name="printer-model"]').val();
     printer.ip = $('.modal-body').find('input[name="printer-ip"]').val();
@@ -485,6 +485,7 @@ $(function () {
   // eliminar impresora
    $('#printersTable').on('click', 'button.rm', async(e) =>  {
     const id = $(e.target).attr("data-printerid");
+
     await Pmgr.rmPrinter(+id).then(() => {
       update();
       $('#deletePrinterModal' +id).modal('hide');
@@ -506,7 +507,8 @@ $(function () {
 
     let o = { id: +printerId , alias, model, location, ip, queue: printer.queue, status: printer.status };
     console.log("edit printer", printer, "data", o);
-    Pmgr.setPrinter(o).then(() => {
+
+    await Pmgr.setPrinter(o).then(() => {
       update();
       $('#editPrinterModal' +printerId).modal('hide');
       $('body').removeClass('modal-open');
@@ -531,14 +533,18 @@ $(function () {
     console.log("new group", group);
     Pmgr.addGroup(group).then(() => update());
     clearAddPGroupForm();
-    // location.reload(); 
   });
 
   // eliminar grupo CHECKED
   $('#groupsTable').on('click', 'button.rmg', async(e) =>  {
     const id = $(e.target).attr("data-groupid");
-    await Pmgr.rmGroup(+id).then(() => update());
-    location.reload(); 
+
+    await Pmgr.rmGroup(+id).then(() => {
+      update();
+      $('#deleteGroupModal' +id).modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+    });
   });
 
   // editar grupo
@@ -556,8 +562,9 @@ $(function () {
     }
 
     let o= { id: +groupid, name, printers };
+    console.log("edit group", group, "data", o);
 
-    Pmgr.setGroup(o).then(() => {
+    await Pmgr.setGroup(o).then(() => {
       update();
       $('#editGroupModal' +groupId).modal('hide');
       $('body').removeClass('modal-open');
@@ -571,22 +578,26 @@ $(function () {
   $('#addJob').on('click', function () {
     const job = new Pmgr.Job();
 
-    // job.id = (Pmgr.globalState.jobs[Pmgr.globalState.jobs.length - 1].id) + 1;
     job.owner = $('.modal-body').find('input[name="input-job-owner"]').val();
     job.fileName = $('.modal-body').find('input[name="input-job-file"]').val();
     job.printer = $('.modal-body').find('#input-job-printer-asigned').val();
   
     console.log("new job", job);
     Pmgr.addJob(job).then(() => update());
-    clearAddJobForm();
-    // location.reload(); 
+    clearAddJobForm(); 
   });
 
   // eliminar trabajo
   $('#jobsTable').on('click', 'button.rmj', async(e) =>  {
       const id = $(e.target).attr("data-jobid");
-      await Pmgr.rmJob(+id).then(() => update());
-      location.reload(); 
+      
+      await Pmgr.rmJob(+id).then(() => {
+        update();
+        $('#deleteJobModal' +id).modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+      });
+       
   });
 
    // editar trabajo
@@ -598,9 +609,15 @@ $(function () {
     const owner = $('.modal-body').find('input[name="input-job-owner"]').val();
     const fileName = $('.modal-body').find('input[name="input-job-file"]').val();
 
-    console.log("edit job", job);
-    await Pmgr.setJob({ id: +jobid, printer, owner, fileName }).then(() => update());
-    // location.reload(); 
+    let o =  { id: +jobid, printer, owner, fileName };
+    console.log("edit job", job, "data", o);
+    
+    await Pmgr.setJob(o).then(() => {
+      update();
+      $('#editJobModal' +jobId).modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+    });
   });
 
   /*
