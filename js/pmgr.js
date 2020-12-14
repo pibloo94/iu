@@ -41,12 +41,10 @@ function createPrinterItem(printer) {
     `<span class="badge badge-secondary">${id}</span>`
   ).join(" ");
 
-  let allGroups = Pmgr.globalState.groups.filter(g => g.printers.indexOf(printer.id)).map(g =>
+  let allGroups = Pmgr.globalState.groups.filter(g => g.printers.includes(printer.id)).map(g =>
     `<span class="badge badge-secondary">${g.name}</span>`
   ).join(" ");
-
-  let editAllGroups = Pmgr.globalState.groups.filter(g => g.printers.indexOf(printer.id)).map(g => g.name).join(", ");
-
+ 
   return `
     <tr id=${printer.id}>
       <th scope="row">${printer.id}</th>
@@ -105,7 +103,7 @@ function createPrinterItem(printer) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary editp" data-printerid="${printer.id}">Edit</button>
+                <button type="button" class="btn btn-primary editp" data-dismiss="modal" data-printerid="${printer.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -419,6 +417,18 @@ $(function () {
       Pmgr.globalState.printers.forEach(printer => {
         $('#edit-group-printers').append(`<option value=${printer.id}>${printer.alias}</option>`);
       });
+
+      $('input[name="printer-ip"]').change(e => {
+        let o = e.target;
+        let v = $(o).val();
+        console.log(o, v);
+        if (v.matches(/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]/)) {
+          o.setCustomValidity("")
+        } else {
+          o.setCustomValidity("Eso no es una IP. Ni siquiera se parece a una.")
+        }       
+      });
+
       // y asi para cada cosa que pueda haber cambiado
     } catch (e) {
       console.log('Error actualizando', e);
@@ -447,6 +457,7 @@ $(function () {
   // FUNCIONES DE PRINTER
   // crear impresora
   $('#addPrinter').on('click', async function () {
+
     const printer = new Pmgr.Printer();
     const group = Pmgr.globalState.groups.find(element => element.id == $('.modal-body').find('#printer-group').val());
 
@@ -467,13 +478,19 @@ $(function () {
     clearAddPrinterForm();
     toastMessage("Created printer", `The printer ${printer.alias} was created succesfully`);
     update();
+    // https://stackoverflow.com/questions/1357118/event-preventdefault-vs-return-false
+    return false;
   });
 
   // eliminar impresora
    $('#printersTable').on('click', 'button.rm', async(e) =>  {
     const id = $(e.target).attr("data-printerid");
-    await Pmgr.rmPrinter(+id).then(() => update());
-    location.reload();
+    await Pmgr.rmPrinter(+id).then(() => {
+      update();
+      $('#deletePrinterModal' +id).modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+    });
   });
 
   // editar impresora
@@ -482,14 +499,19 @@ $(function () {
     const printer = Pmgr.globalState.printers.find(element => element.id = printerId);
     console.log(printer);
 
-    const alias = $('#editPrinter').find('input[name="input-edit-printer-alias"]').val();
-    const model = $('#editPrinter').find('input[name="input-edit-printer-model"]').val();
-    const ip = $('#editPrinter').find('input[name="input-edit-printer-ip"]').val();
-    const location = $('#editPrinter').find('input[name="input-edit-printer-location"]').val();
+    const alias = $('#editPrinter input[name="input-edit-printer-alias"]').val();
+    const model = $('#editPrinter input[name="input-edit-printer-model"]').val();
+    const ip = $('#editPrinter input[name="input-edit-printer-ip"]').val();
+    const location = $('#editPrinter input[name="input-edit-printer-location"]').val();
 
-    console.log("edit printer", printer);
-    Pmgr.setPrinter({ id: printer.id , alias, model, location, ip, queue: printer.queue, status: printer.status }).then(() => update());
-    // location.reload(); 
+    let o = { id: +printerId , alias, model, location, ip, queue: printer.queue, status: printer.status };
+    console.log("edit printer", printer, "data", o);
+    Pmgr.setPrinter(o).then(() => {
+      update();
+      $('#editPrinterModal' +printerId).modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+    });
   });
 
   // FUNCIONES DE GROUP
@@ -533,8 +555,14 @@ $(function () {
       }
     }
 
-    await Pmgr.setGroup({ id: groupid, name, printers }).then(() => update());
-    // location.reload(); 
+    let o= { id: +groupid, name, printers };
+
+    Pmgr.setGroup(o).then(() => {
+      update();
+      $('#editGroupModal' +groupId).modal('hide');
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+    });
   });
 
 
@@ -571,7 +599,7 @@ $(function () {
     const fileName = $('.modal-body').find('input[name="input-job-file"]').val();
 
     console.log("edit job", job);
-    await Pmgr.setJob({ id: jobid, printer, owner, fileName }).then(() => update());
+    await Pmgr.setJob({ id: +jobid, printer, owner, fileName }).then(() => update());
     // location.reload(); 
   });
 
