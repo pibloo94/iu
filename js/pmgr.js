@@ -73,30 +73,30 @@ function createPrinterItem(printer) {
               <div id="editPrinter" class="modal-body">
                 <form>
                   <div class="form-row">
-                    <label for="input-edit-printer-alias" class="col-sm-4 col-form-label">Alias</label>
+                    <label for="input-edit-printer-alias${printer.id}" class="col-sm-4 col-form-label">Alias</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="input-edit-printer-alias" value="${printer.alias}" placeholder="Name">
+                      <input type="text" class="form-control" name="input-edit-printer-alias${printer.id}" value="${printer.alias}" placeholder="Name">
                     </div>
-                    <label for="input-edit-printer-model" class="col-sm-4 col-form-label">Model</label>
+                    <label for="input-edit-printer-model${printer.id}" class="col-sm-4 col-form-label">Model</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="input-edit-printer-model" value="${printer.model}" placeholder="Model">
+                      <input type="text" class="form-control" name="input-edit-printer-model${printer.id}" value="${printer.model}" placeholder="Model">
                     </div>
-                    <label for="input-edit-printer-status" class="col-sm-4 col-form-label">Status</label>
+                    <label for="input-edit-printer-status${printer.id}" class="col-sm-4 col-form-label">Status</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="input-printer-status" value="${printer.status}" placeholder="Status">
+                      <input type="text" class="form-control" name="input-printer-status${printer.id}" value="${printer.status}" placeholder="Status">
                     </div>
                     <label for="edit-printer-group${printer.id}" class="col-sm-4 col-form-label">Group</label>
                     <div class="form-group col-8">
                       <select class="custom-select" id="edit-printer-group${printer.id}">
                       </select>
                     </div>
-                    <label for="input-edit-printer-ip" class="col-sm-4 col-form-label">IP</label>
+                    <label for="input-edit-printer-ip${printer.id}" class="col-sm-4 col-form-label">IP</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="input-edit-printer-ip" value="${printer.ip}" placeholder="IP">
+                      <input type="text" class="form-control" name="input-edit-printer-ip${printer.id}" value="${printer.ip}" placeholder="IP">
                     </div>
-                    <label for="input-edit-printer-location" class="col-sm-4 col-form-label">Location</label>
+                    <label for="input-edit-printer-location${printer.id}" class="col-sm-4 col-form-label">Location</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="input-edit-printer-location" value="${printer.location}" placeholder="Location">
+                      <input type="text" class="form-control" name="input-edit-printer-location${printer.id}" value="${printer.location}" placeholder="Location">
                     </div>
                   </div>
                 </form>
@@ -163,9 +163,9 @@ function createGroupItem(group) {
               <div id="editGroup" class="modal-body">
                 <form>
                   <div class="form-row">
-                    <label for="edit-group-name" class="col-sm-4 col-form-label">Group name </label>
+                    <label for="edit-group-name${group.id}" class="col-sm-4 col-form-label">Group name </label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="edit-group-name" value="${group.name}">
+                      <input type="text" class="form-control" name="edit-group-name${group.id}" value="${group.name}">
                     </div>
                     <label for="edit-group-printers${group.id}" class="col-sm-4 col-form-label">Printers </label>
                     <div class="form-group col-8">
@@ -232,9 +232,9 @@ function createJobItem(job) {
               <div id="editJob" class="modal-body">
                 <form>
                   <div class="form-row">
-                    <label for="inputOwner" class="col-sm-4 col-form-label">Owner</label>
+                    <label for="edit-job-owner${job.id}" class="col-sm-4 col-form-label">Owner</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="edit-job-owner" value="${job.owner}">
+                      <input type="text" class="form-control" name="edit-job-owner${job.id}" value="${job.owner}">
                     </div>
                     <label for="edit-job-printer-asigned${job.id}" class="col-sm-4 col-form-label">Printer asigned</label>
                     <div class="form-group col-8">
@@ -552,13 +552,12 @@ $(function () {
   // editar impresora CHECKED
   $('#printersTable').on('click', 'button.editp', async (e) => {
     const printerId = $(e.target).attr("data-edit-printerid");
-    const printer = Pmgr.globalState.printers.find(element => element.id == printerId);
-    console.log(printer);
+    const printer = await Pmgr.globalState.printers.find(element => element.id == printerId);
 
-    const alias = $('#editPrinter input[name="input-edit-printer-alias"]').val();
-    const model = $('#editPrinter input[name="input-edit-printer-model"]').val();
-    const ip = $('#editPrinter input[name="input-edit-printer-ip"]').val();
-    const location = $('#editPrinter input[name="input-edit-printer-location"]').val();
+    const alias = $('#editPrinter input[name="input-edit-printer-alias' + printer.id + '"]').val();
+    const model = $('#editPrinter input[name="input-edit-printer-model' + printer.id + '"]').val();
+    const ip = $('#editPrinter input[name="input-edit-printer-ip' + printer.id + '"]').val();
+    const location = $('#editPrinter input[name="input-edit-printer-location' + printer.id + '"]').val();
 
     let o = { id: +printerId , alias, model, location, ip, queue: printer.queue, status: printer.status };
     console.log("edit printer", printer, "data", o);
@@ -607,7 +606,7 @@ $(function () {
     const groupId = $(e.target).attr("data-edit-groupid");
     const group = Pmgr.globalState.groups.find(element => element.id == groupId);
 
-    const name = $('#editGroup').find('input[name="edit-group-name"]').val();
+    const name = $('#editGroup input[name="edit-group-name' + group.id + '"]').val();
     const printers = [];
 
     for (var option of document.getElementById('edit-group-printers' + groupId).options) {
@@ -675,8 +674,8 @@ $(function () {
     const jobId = $(e.target).attr("data-edit-jobid");
     const job = Pmgr.globalState.jobs.find(element => element.id == jobId);
 
-    const owner = $('.modal-body').find('input[name="edit-job-owner"]').val();
-    const printer = $('.modal-body').find('#edit-job-printer-asigned' + jobId).val();
+    const owner = $('.modal-body input[name="edit-job-owner' + job.id + '"]').val();
+    const printer = $('.modal-body #edit-job-printer-asigned' + jobId).val();
 
     let o =  { id: +jobId, printer, owner, fileName: job.fileName };
     console.log("edit job", job, "data", o);
