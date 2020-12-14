@@ -85,9 +85,9 @@ function createPrinterItem(printer) {
                     <div class="form-group col-8">
                       <input type="text" class="form-control" name="input-printer-status" value="${printer.status}" placeholder="Status">
                     </div>
-                    <label for="edit-printer-group" class="col-sm-4 col-form-label">Printers</label>
+                    <label for="edit-printer-group${printer.id}" class="col-sm-4 col-form-label">Group</label>
                     <div class="form-group col-8">
-                      <select class="custom-select multi-select-group-printer" id="edit-printer-group" placeholder="Groups" multiple>
+                      <select class="custom-select" id="edit-printer-group${printer.id}">
                       </select>
                     </div>
                     <label for="input-edit-printer-ip" class="col-sm-4 col-form-label">IP</label>
@@ -167,9 +167,9 @@ function createGroupItem(group) {
                     <div class="form-group col-8">
                       <input type="text" class="form-control" name="edit-group-name" value="${group.name}">
                     </div>
-                    <label for="inputGroupPrinters" class="col-sm-4 col-form-label">Printers </label>
+                    <label for="edit-group-printers${group.id}" class="col-sm-4 col-form-label">Printers </label>
                     <div class="form-group col-8">
-                      <select class="custom-select multi-select-printers-group" id="edit-group-printers" placeholder="Groups" multiple>
+                      <select class="custom-select multi-select-printers-group" id="edit-group-printers${group.id}" placeholder="Groups" multiple>
                       </select>
                     </div>
                   </div>
@@ -236,25 +236,17 @@ function createJobItem(job) {
                     <div class="form-group col-8">
                       <input type="text" class="form-control" name="edit-job-owner" value="${job.owner}">
                     </div>
-                    <label for="inputPrinter" class="col-sm-4 col-form-label">Printer asigned</label>
+                    <label for="edit-job-printer-asigned${job.id}" class="col-sm-4 col-form-label">Printer asigned</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" id="edit-job-printer-name" value="${job.printer}">
-                    </div>
-                    <label for="inputOwner" class="col-sm-4 col-form-label">File</label>
-                    <div class="form-group col-8">
-                      <div class="input-group mb-3">
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="edit-job-file-input">
-                          <label class="custom-file-label" for="edit-job-file-input">${job.fileName}</label>
-                        </div>
-                      </div>
+                      <select class="custom-select" id="edit-job-printer-asigned${job.id}">
+                      </select>
                     </div>
                   </div>
                 </form>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary editj" data-dismiss="modal" onclick="editJob(${job.id})">Edit</button>
+                <button type="button" class="btn btn-primary editj" data-jobid="${job.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -411,21 +403,85 @@ $(function () {
       Pmgr.globalState.groups.forEach(group => {
         $('#printer-group').append(`<option value=${group.id}>${group.name}</option>`);
       });
-      Pmgr.globalState.groups.forEach(group => {
-        $('#edit-printer-group').append(`<option value=${group.id}>${group.name}</option>`);
-      });
       Pmgr.globalState.printers.forEach(printer => {
-        $('#edit-group-printers').append(`<option value=${printer.id}>${printer.alias}</option>`);
+        Pmgr.globalState.groups.forEach(group => {
+          $('#edit-printer-group' + printer.id).append(`<option value=${group.id}>${group.name}</option>`);
+        });
+      });
+      Pmgr.globalState.groups.forEach(group => {
+        Pmgr.globalState.printers.forEach(printer => {
+          $('#edit-group-printers' + group.id).append(`<option value=${printer.id}>${printer.alias}</option>`);
+        });
+      });
+      Pmgr.globalState.jobs.forEach(job => {
+        Pmgr.globalState.printers.forEach(printer => {
+          $('#edit-job-printer-asigned' + job.id).append(`<option value=${printer.id}>${printer.alias}</option>`);
+        });
       });
 
       $('input[name="printer-ip"]').change(e => {
         let o = e.target;
         let v = $(o).val();
         console.log(o, v);
-        if (v.matches(/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]/)) {
+        if (v.match(/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]/)) {
           o.setCustomValidity("")
         } else {
           o.setCustomValidity("Eso no es una IP. Ni siquiera se parece a una.")
+        }       
+      });
+
+      $('input[name="printer-name"]').change(e => {
+        let o = e.target;
+        let v = $(o).val();
+        console.log(o, v);
+        if (v.match(/([A-z])\w+/)) {  //cadenas alfanuméricas
+          o.setCustomValidity("")
+        } else {
+          o.setCustomValidity("No es un nombre valido.")
+        }       
+      });
+
+      $('input[name="printer-model"]').change(e => {
+        let o = e.target;
+        let v = $(o).val();
+        console.log(o, v);
+        if (v.match(/([A-z])\w+/)) {  //cadenas alfanuméricas
+          o.setCustomValidity("")
+        } else {
+          o.setCustomValidity("No es un nombre valido.")
+        }       
+      });
+
+      $('input[name="printer-location"]').change(e => {
+        let o = e.target;
+        let v = $(o).val();
+        console.log(o, v);
+        if (v.match(/([A-z])\w+/)) {  //cadenas alfanuméricas
+          o.setCustomValidity("")
+        } else {
+          o.setCustomValidity("No es un nombre valido.")
+        }       
+      });
+
+      $('input[name="input-job-owner"]').change(e => {
+        let o = e.target;
+        let v = $(o).val();
+        console.log(o, v);
+        if (v.match(/([A-z]*)/)) {    //Solo cadenas con letras
+          o.setCustomValidity("")
+        } else {
+          o.setCustomValidity("No es un nombre valido.")
+        }       
+      });
+
+      $('input[name="inputGroupName"]').change(e => {
+        let o = e.target;
+        let v = $(o).val();
+        console.log(o, v);
+        if (v.match(/([A-z])\w+/)) {    //cadenas alfanuméricas
+          o.setCustomValidity("")
+        } else {
+          o.setCustomValidity("No es un nombre valido.")
         }       
       });
 
@@ -468,7 +524,7 @@ $(function () {
     printer.status = "paused";
     printer.queue = [];
 
-    await Pmgr.addPrinter(printer);
+    await Pmgr.addPrinter(printer).then(update());
     const aux = Pmgr.globalState.printers.find(element => element.alias == printer.alias);
     await group.printers.push(aux.id);
 
@@ -476,8 +532,8 @@ $(function () {
     console.log("added printer to group", group);
     clearAddPrinterForm();
     toastMessage("Created printer", `The printer ${printer.alias} was created succesfully`);
-    update();
     // https://stackoverflow.com/questions/1357118/event-preventdefault-vs-return-false
+    update();
     return false;
   });
 
@@ -554,7 +610,7 @@ $(function () {
     const name = $('#editGroup').find('input[name="edit-group-name"]').val();
     const printers = [];
 
-    for (var option of document.getElementById('edit-group-printers').options) {
+    for (var option of document.getElementById('edit-group-printers' + groupId).options) {
       if (option.selected) {
        printers.push(option.value);
       }
@@ -573,7 +629,7 @@ $(function () {
 
 
   // FUNCIONES DE JOB
-  // crear trabajo
+  // crear trabajo CHEKED
   $('#addJob').on('click', async function () {
     const job = new Pmgr.Job();
 
@@ -601,7 +657,7 @@ $(function () {
     clearAddJobForm(); 
   });
 
-  // eliminar trabajo
+  // eliminar trabajo CHECKED
   $('#jobsTable').on('click', 'button.rmj', async(e) =>  {
       const id = $(e.target).attr("data-jobid");
       
@@ -619,11 +675,10 @@ $(function () {
     const jobId = $(e.target).attr("data-jobid");
     const job = Pmgr.globalState.jobs.find(element => element.id = jobId);
 
-    const fileName = $('.modal-body').find('#edit-job-file-input').val();
     const owner = $('.modal-body').find('input[name="edit-job-owner"]').val();
-    const printer = $('.modal-body').find('input[name="edit-job-printer-name"]').val();
+    const printer = $('.modal-body').find('#edit-job-printer-asigned' + jobId).val();
 
-    let o =  { id: +jobId, printer, owner, fileName };
+    let o =  { id: +jobId, printer, owner, fileName: job.fileName };
     console.log("edit job", job, "data", o);
     
     await Pmgr.setJob(o).then(() => {
