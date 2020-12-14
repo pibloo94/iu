@@ -103,7 +103,7 @@ function createPrinterItem(printer) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary editp" data-dismiss="modal" data-printerid="${printer.id}">Edit</button>
+                <button type="button" class="btn btn-primary editp" data-dismiss="modal" data-edit-printerid="${printer.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@ function createGroupItem(group) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary editg" data-groupid="${group.id}">Edit</button>
+                <button type="button" class="btn btn-primary editg" data-edit-groupid="${group.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -246,7 +246,7 @@ function createJobItem(job) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary editj" data-jobid="${job.id}">Edit</button>
+                <button type="button" class="btn btn-primary editj" data-edit-jobid="${job.id}">Edit</button>
               </div>
             </div>
           </div>
@@ -551,8 +551,8 @@ $(function () {
 
   // editar impresora CHECKED
   $('#printersTable').on('click', 'button.editp', async (e) => {
-    const printerId = $(e.target).attr("data-printerid");
-    const printer = Pmgr.globalState.printers.find(element => element.id = printerId);
+    const printerId = $(e.target).attr("data-edit-printerid");
+    const printer = Pmgr.globalState.printers.find(element => element.id == printerId);
     console.log(printer);
 
     const alias = $('#editPrinter input[name="input-edit-printer-alias"]').val();
@@ -604,8 +604,8 @@ $(function () {
 
   // editar grupo CHECKED
   $('#groupsTable').on('click', 'button.editg', async(e) => {
-    const groupId = $(e.target).attr("data-groupid");
-    const group = Pmgr.globalState.groups.find(element => element.id = groupId);
+    const groupId = $(e.target).attr("data-edit-groupid");
+    const group = Pmgr.globalState.groups.find(element => element.id == groupId);
 
     const name = $('#editGroup').find('input[name="edit-group-name"]').val();
     const printers = [];
@@ -672,8 +672,8 @@ $(function () {
 
    // editar trabajo
    $('#jobsTable').on('click', 'button.editj', async(e) => {
-    const jobId = $(e.target).attr("data-jobid");
-    const job = Pmgr.globalState.jobs.find(element => element.id = jobId);
+    const jobId = $(e.target).attr("data-edit-jobid");
+    const job = Pmgr.globalState.jobs.find(element => element.id == jobId);
 
     const owner = $('.modal-body').find('input[name="edit-job-owner"]').val();
     const printer = $('.modal-body').find('#edit-job-printer-asigned' + jobId).val();
