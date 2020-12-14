@@ -234,18 +234,18 @@ function createJobItem(job) {
                   <div class="form-row">
                     <label for="inputOwner" class="col-sm-4 col-form-label">Owner</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="inputOwner" value="${job.owner}">
+                      <input type="text" class="form-control" name="edit-job-owner" value="${job.owner}">
                     </div>
                     <label for="inputPrinter" class="col-sm-4 col-form-label">Printer asigned</label>
                     <div class="form-group col-8">
-                      <input type="text" class="form-control" name="inputPrinter" value="${job.printer}">
+                      <input type="text" class="form-control" id="edit-job-printer-name" value="${job.printer}">
                     </div>
                     <label for="inputOwner" class="col-sm-4 col-form-label">File</label>
                     <div class="form-group col-8">
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" id="inputGroupFile01">
-                          <label class="custom-file-label" for="inputGroupFile01">${job.fileName}</label>
+                          <input type="file" class="custom-file-input" name="edit-job-file-input">
+                          <label class="custom-file-label" for="edit-job-file-input">${job.fileName}</label>
                         </div>
                       </div>
                     </div>
@@ -455,13 +455,12 @@ $(function () {
   });
 
   // FUNCIONES DE PRINTER
-  // crear impresora
+  // crear impresora CHECKED
   $('#addPrinter').on('click', async function () {
 
     const printer = new Pmgr.Printer();
     const group = Pmgr.globalState.groups.find(element => element.id == $('.modal-body').find('#printer-group').val());
 
-    //printer.id = (Pmgr.globalState.printers[Pmgr.globalState.printers.length - 1].id) + 1;
     printer.alias = $('.modal-body').find('input[name="printer-name"]').val();
     printer.model = $('.modal-body').find('input[name="printer-model"]').val();
     printer.ip = $('.modal-body').find('input[name="printer-ip"]').val();
@@ -482,7 +481,7 @@ $(function () {
     return false;
   });
 
-  // eliminar impresora
+  // eliminar impresora CHECKED
    $('#printersTable').on('click', 'button.rm', async(e) =>  {
     const id = $(e.target).attr("data-printerid");
 
@@ -494,8 +493,8 @@ $(function () {
     });
   });
 
-  // editar impresora
-  $('#printersTable').on('click', 'button.editp', (e) => {
+  // editar impresora CHECKED
+  $('#printersTable').on('click', 'button.editp', async (e) => {
     const printerId = $(e.target).attr("data-printerid");
     const printer = Pmgr.globalState.printers.find(element => element.id = printerId);
     console.log(printer);
@@ -575,7 +574,7 @@ $(function () {
 
   // FUNCIONES DE JOB
   // crear trabajo
-  $('#addJob').on('click', function () {
+  $('#addJob').on('click', async function () {
     const job = new Pmgr.Job();
 
     job.owner = $('.modal-body').find('input[name="input-job-owner"]').val();
@@ -583,7 +582,22 @@ $(function () {
     job.printer = $('.modal-body').find('#input-job-printer-asigned').val();
   
     console.log("new job", job);
-    Pmgr.addJob(job).then(() => update());
+    await Pmgr.addJob(job).then(() => update());
+    const aux = Pmgr.globalState.printers.find(element => element.id == job.printer);
+
+    let o = { 
+      id: +aux.id , 
+      alias: aux.alias, 
+      model: aux.model, 
+      location: aux.location, 
+      ip: aux.ip, 
+      queue: aux.queue.push(job.id), 
+      status: "PRINTING" 
+    };
+
+    await Pmgr.setPrinter(o);
+    console.log(aux, job.printer);
+
     clearAddJobForm(); 
   });
 
@@ -601,13 +615,13 @@ $(function () {
   });
 
    // editar trabajo
-   $('#jobsTable').on('click', 'button.edit', async(e) => {
+   $('#jobsTable').on('click', 'button.editj', async(e) => {
     const jobid = $(e.target).attr("data-jobid");
     const job = Pmgr.globalState.jobs.find(element => element.id = jobid);
 
-    const printer = $('.modal-body').find('#input-job-printer-asigned').val();
-    const owner = $('.modal-body').find('input[name="input-job-owner"]').val();
-    const fileName = $('.modal-body').find('input[name="input-job-file"]').val();
+    const fileName = $('.modal-body').find('#edit-job-file-input').val();
+    const owner = $('.modal-body').find('input[name="edit-job-owner"]').val();
+    const printer = $('.modal-body').find('input[name="edit-job-printer-name"]').val();
 
     let o =  { id: +jobid, printer, owner, fileName };
     console.log("edit job", job, "data", o);
